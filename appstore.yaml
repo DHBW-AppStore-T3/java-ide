@@ -6,9 +6,8 @@ scope: user
 workload:
   containers:
     - name: ide
-      # Built by .github/workflows/ci.yml. PLACEHOLDER until the first build: replace the tag by the digest from the
-      # job summary (see README), then switch strict-image-pin on in ci.yml.
-      image: ghcr.io/dhbw-appstore-t3/apps/java-ide:latest
+      # Built by .github/workflows/ci.yml. After changing image/, copy the new digest here.
+      image: ghcr.io/dhbw-appstore-t3/apps/java-ide@sha256:d590328ca4bf68947f2e2c7ed143de9a9c8cc131bf18bcf11cc8adb662251588
       expose: { port: 8080, path: / }
       # The Java language server needs far more than a plain code-server: allow bursts, reserve a moderate share.
       resources: { cpu: "2", memory: 3Gi, requests: { cpu: 200m, memory: 768Mi } }
