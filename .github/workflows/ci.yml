@@ -23,5 +23,4 @@ jobs:
     with:
       push: ${{ github.event_name != 'schedule' }}
       images: '[{"suffix":"","context":"image","dockerfile":"image/Dockerfile","smoke_test":".github/smoke-test.sh"}]'
-      # FIRST BUILD ONLY: appstore.yaml still holds a placeholder tag. After the digest is committed, set this to true.
-      strict-image-pin: false
+      strict-image-pin: true

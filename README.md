@@ -24,7 +24,6 @@ Das Image (`image/Dockerfile`) baut `.github/workflows/ci.yml` mit der zentralen
 hadolint, Smoke-Test, Trivy, Push nach ghcr.io). Nach einer Änderung an `image/`:
 
 1. Digest aus der Job-Summary in `appstore.yaml` eintragen (`ghcr.io/dhbw-appstore-t3/apps/java-ide@sha256:...`).
-2. Beim allerersten Mal zusätzlich `strict-image-pin: true` in `ci.yml` setzen.
-3. Paket auf ghcr.io auf *Public* stellen, dann Version taggen (`v1.0.0`) und im AppStore einreichen.
+2. Version taggen (`v1.0.0`) und im AppStore einreichen.
 
 Siehe die Schritt-für-Schritt-Anleitung im README von `app-registry`.
