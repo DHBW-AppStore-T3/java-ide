@@ -16,8 +16,13 @@ workload:
       writablePaths: [/tmp]
   # HOME of the container: projects, ~/.m2 (Maven repository) and the language server's workspace data.
   storage: { size: 5Gi, mountPath: /home/coder }
-# Maven Central needs internet access.
-egress: internet
+# What the workspace may reach (the contract: app-registry README, "network"). Maven resolves plugins and dependencies
+# from Maven Central, so a build fails without the internet: it starts on (a teacher can switch it off, an exam). The
+# workspaces of one deployment may reach each other (students' own TCP/UDP servers and clients: the Java network
+# exercises), so that starts on, too.
+network:
+  internet: { allowed: true, default: true }
+  podNetwork: { allowed: true, default: true }
 access:
   - { type: url, template: "https://{workload}-{deployment}.{domain}" }
   - { type: password, from: generated-password, username: "{user}" }

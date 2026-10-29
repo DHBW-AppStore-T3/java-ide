@@ -1,6 +1,6 @@
 # code-server with JDK 21 and Maven for the pod runtime (appstore.yaml). One container per person; the
 # platform sets user (UID 1000), a read-only root filesystem and the password (env PASSWORD).
-FROM docker.io/codercom/code-server:4.143.1
+FROM docker.io/codercom/code-server:4.144.0
 
 # JDK and Maven come from the Debian packages of the base image (Debian 13), so there is no extra download source.
 # fixuid (a Go binary in the upstream image) only serves upstream's own entrypoint, which the ENTRYPOINT below
