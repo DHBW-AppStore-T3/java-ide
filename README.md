@@ -7,7 +7,7 @@ eigenem Link, eigenem Passwort und eigenem Speicher (5 GiB). Studierende müssen
 
 | Bestandteil | Version |
 |---|---|
-| code-server | 4.143.1 |
+| code-server | 4.144.0 |
 | OpenJDK (`javac`, `java`) | 21 (Debian-Paket) |
 | Maven (`mvn`) | Debian-Paket |
 | Java-Extensions | `redhat.java` 1.58.0, `vscjava.vscode-java-debug` 0.60.0 |
