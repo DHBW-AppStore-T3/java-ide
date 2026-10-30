@@ -1,5 +1,18 @@
 # code-server with JDK 21 and Maven for the pod runtime (appstore.yaml). One container per person; the
 # platform sets user (UID 1000), a read-only root filesystem and the password (env PASSWORD).
+
+# Build stage for libpeerbroadcast.so (peerbroadcast/peerbroadcast.c): the compiler stays out of the final image. Same
+# base as the final image, so the library is built against the glibc it runs with.
+FROM docker.io/codercom/code-server:4.144.0 AS peerbroadcast
+USER root
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gcc libc6-dev \
+ && rm -rf /var/lib/apt/lists/*
+COPY peerbroadcast/peerbroadcast.c /build/peerbroadcast.c
+RUN gcc -std=gnu11 -O2 -Wall -Wextra -Werror -fPIC -shared -Wl,-z,relro,-z,now \
+      -o /build/libpeerbroadcast.so /build/peerbroadcast.c -ldl -lpthread
+USER 1000
+
 FROM docker.io/codercom/code-server:4.144.0
 
 # JDK and Maven come from the Debian packages of the base image (Debian 13), so there is no extra download source.
@@ -31,6 +44,13 @@ RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 USER 1000
+
+# UDP "broadcast" between the environments of a deployment. The platform has no layer-2 broadcast (it would reach the
+# pods of other deployments), so a send to 255.255.255.255, a multicast address or the subnet's broadcast address is
+# turned into a send to every address of the Service "peers" (see peerbroadcast.c). LD_PRELOAD covers every process of
+# the container: the terminal, the JVM that runs a student's program, the debugger.
+COPY --from=peerbroadcast /build/libpeerbroadcast.so /opt/appstore/libpeerbroadcast.so
+ENV LD_PRELOAD=/opt/appstore/libpeerbroadcast.so
 
 # The cluster is IPv6-primary: listen on all families, not on 127.0.0.1.
 # No entrypoint script: it may try sudo, which the platform forbids.

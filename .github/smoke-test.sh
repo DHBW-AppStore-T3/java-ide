@@ -41,3 +41,23 @@ public class Hello {
 EOF
 out=$(docker exec ide sh -c 'cd /tmp && javac Hello.java && java Hello')
 grep -qx "hello-java" <<<"$out"
+
+# The preload library is active in every process of the container (terminal, JVM, debugger).
+[ "$(docker exec ide printenv LD_PRELOAD)" = "/opt/appstore/libpeerbroadcast.so" ]
+docker exec ide test -r /opt/appstore/libpeerbroadcast.so
+
+# UDP broadcast between the environments of a deployment (image/peerbroadcast): the platform gives a deployment the
+# name "peers" for all its pods but no layer-2 broadcast, so a send to 255.255.255.255 or a multicast address must reach
+# every address of "peers" exactly once, and a unicast send only its target. "peers" is made to resolve to two receiver
+# addresses here. Run once with an IPv4 socket and once with a dual-stack socket (the JVM default). Same security
+# context as the platform, on the default network: --network host cannot take --add-host.
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+for jvm_flags in "-Djava.net.preferIPv4Stack=true" "-Djava.net.preferIPv4Stack=false"; do
+  # shellcheck disable=SC2086  # jvm_flags is a single JVM option
+  out=$(docker run --rm --user 1000:1000 --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp \
+    --add-host peers:127.0.0.2 --add-host peers:127.0.0.3 \
+    -v "$here/BroadcastCheck.java:/check/BroadcastCheck.java:ro" \
+    --entrypoint java "$IMAGE" $jvm_flags /check/BroadcastCheck.java 127.0.0.2 127.0.0.3)
+  echo "$out"
+  grep -qx "broadcast-ok" <<<"$out"
+done
