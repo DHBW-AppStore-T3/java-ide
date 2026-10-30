@@ -3,6 +3,10 @@
 Browser-IDE (code-server) mit **JDK 21** und **Maven** für Java-Übungen. Jede Person bekommt einen eigenen Pod mit
 eigenem Link, eigenem Passwort und eigenem Speicher (5 GiB). Studierende müssen nichts installieren.
 
+Standard ist ein Pod je Person (`scope: user`). Mit `scopeChoice: true` kann die Lehrperson im Wizard unter
+„Experteneinstellungen“ stattdessen einen Pod je Gruppe wählen; die Mitglieder einer Gruppe teilen sich dann
+Pod, Speicher und Passwort.
+
 ## Was enthalten ist
 
 | Bestandteil | Version |

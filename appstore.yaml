@@ -3,6 +3,7 @@ apiVersion: appstore/v2
 name: java-ide
 runtime: kubernetes
 scope: user
+scopeChoice: true
 workload:
   containers:
     - name: ide
